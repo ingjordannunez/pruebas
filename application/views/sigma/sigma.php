@@ -57,7 +57,7 @@
 					<div class="container">
 						<form action="guardar" method="post" id="form-registro">
 							<div class="form-group">
-							    <label for="departamento"><strong>Departamentossssssss*</strong></label>
+							    <label for="departamento"><strong>Departamento*</strong></label>
 							    <select class="form-control" id="departamento" name="departamento">
 							    	<option value="">Elegir...</option>
 							    	<?php
@@ -68,7 +68,7 @@
 							    </select>
 							</div>
 							<div class="form-group">
-							    <label for="ciudad"><strong>Ciudad xxxxx*</strong></label>
+							    <label for="ciudad"><strong>Ciudad*</strong></label>
 							    <select class="form-control" id="ciudad" name="ciudad">
 							    	<option value=""></option>
 							    </select>
