@@ -57,7 +57,7 @@
 					<div class="container">
 						<form action="guardar" method="post" id="form-registro">
 							<div class="form-group">
-							    <label for="departamento"><strong>Departamento*</strong></label>
+							    <label for="departamento"><strong>Departamentossss*</strong></label>
 							    <select class="form-control" id="departamento" name="departamento">
 							    	<option value="">Elegir...</option>
 							    	<?php
