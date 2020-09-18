@@ -22,6 +22,7 @@ class Sigma extends CI_Controller {
 		
 	}
 	public function guardar(){
+		$resp= false;
 		$resp = $this->SigmaModel->registrar($_POST);
 		if($resp){
 			$data['status'] = "success";
