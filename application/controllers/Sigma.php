@@ -11,9 +11,9 @@ class Sigma extends CI_Controller {
 
 	public function index() {
 		
-		$dep_ciud = json_decode(file_get_contents('https://sigma-studios.s3-us-west-2.amazonaws.com/test/colombia.json'), true);
+		$dep_ciudssss = json_decode(file_get_contents('https://sigma-studios.s3-us-west-2.amazonaws.com/test/colombia.json'), true);
 
-		$this->load->view('sigma/sigma.php', array('dep_ciud'=>$dep_ciud));
+		$this->load->view('sigma/sigma.php', array('dep_ciud'=>$dep_ciudssss));
 	}
 
 	public function buscarCiudad(){
