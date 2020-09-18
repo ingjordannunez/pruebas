@@ -68,7 +68,7 @@
 							    </select>
 							</div>
 							<div class="form-group">
-							    <label for="ciudad"><strong>Ciudad *</strong></label>
+							    <label for="ciudad"><strong>Ciudad xxxxx*</strong></label>
 							    <select class="form-control" id="ciudad" name="ciudad">
 							    	<option value=""></option>
 							    </select>
