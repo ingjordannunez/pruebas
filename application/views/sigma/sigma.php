@@ -36,7 +36,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-8 offset-2 mb-2" align="center">
-				<p class="h2">Prueba de Desarrollo Sigma prueba 2</p>
+				<p class="h2">Prueba de Desarrollo Sigma prueba 5</p>
 			</div>
 		</div>
 		<div class="row">
@@ -57,7 +57,7 @@
 					<div class="container">
 						<form action="guardar" method="post" id="form-registro">
 							<div class="form-group">
-							    <label for="departamento"><strong>Departamento*</strong></label>
+							    <label for="departamento"><strong>Departamentosssssss*</strong></label>
 							    <select class="form-control" id="departamento" name="departamento">
 							    	<option value="">Elegir...</option>
 							    	<?php
