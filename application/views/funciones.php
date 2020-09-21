@@ -1728,7 +1728,7 @@ class funciones {
                             if($modelSitioPernocte)
                                 $cuerpo.='<td>Sitio Pernocte</td>';
 
-                            $cuerpo.='<td>Orden de servicio</td><td>Placa</td><td>Manifiesto</td><td>Orden P.</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Mercancia</td><td>Fecha</td><tr></tr>';
+                            $cuerpo.='<td>Orden de servicio</td><td>Contenedor</td><td>Placa</td><td>Manifiesto</td><td>Orden P.</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Mercancia</td><td>Fecha</td><tr></tr>';
 
                             $cuerpo .= '<tr>';
                             $cuerpo .= '<td>' . EstadosViajes::model()->findByPk($historial->estado)->estado . '</td>';
@@ -1739,6 +1739,17 @@ class funciones {
                             
 
                             $cuerpo .= '<td>' . $modelOrden->factura . '</td>';
+                            $cuerpo .= '<td>';
+                            if(($modelRemesas->contenedor1=="" || $modelRemesas->contenedor1=="N/A") && ($modelRemesas->contenedor2=="" || $modelRemesas->contenedor2=="N/A")){
+                                $cuerpo.='Carga Suelta';
+                            }
+                            if(($modelRemesas->contenedor1!="" && $modelRemesas->contenedor1!="N/A")){
+                                $cuerpo .= $modelRemesas->contenedor1;
+                            } 
+                            if(($modelRemesas->contenedor2!="" && $modelRemesas->contenedor2!="N/A")){
+                                $cuerpo .= '-'.$modelRemesas->contenedor2;
+                            }
+                            $cuerpo.='</td>';
                             $cuerpo .= '<td>' . $modelViajes->placa . '</td>';
                             $cuerpo .= '<td>' . $modelViajes->manifiesto . '</td>';
                             $cuerpo .= '<td>' . $modelViajes->orden . '</td>';
@@ -1934,7 +1945,7 @@ class funciones {
         if($modelSitioPernocte)
             $cuerpo.='<td>Sitio de Pernocte</td>';
 
-        $cuerpo.='<td>Orden de servicio</td><td>Vehiculo</td><td>Manifiesto</td><td>Oeden de producción</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Producto</td><tr></tr>';
+        $cuerpo.='<td>Orden de servicio</td><td>Contenedor</td><td>Vehiculo</td><td>Manifiesto</td><td>Oeden de producción</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Producto</td><tr></tr>';
         $cuerpo .= '<tr>';
         $cuerpo .= '<td>' . EstadosViajes::model()->findByPk($modelHistorial->estado)->estado . '</td>';
         $cuerpo .= '<td>' . funciones::Get_nombre_ubicacionCompleto($modelHistorial->id_ubicacion) . '</td>';
@@ -1943,6 +1954,17 @@ class funciones {
             $cuerpo .= '<td>Sitio de Pernocte: '.$modelSitioPernocte->descripcion.'</td>';
 
         $cuerpo .= '<td>' . $modelOrden->factura . '</td>';
+        $cuerpo .= '<td>';
+        if(($modelRemesas->contenedor1=="" || $modelRemesas->contenedor1=="N/A") && ($modelRemesas->contenedor2=="" || $modelRemesas->contenedor2=="N/A")){
+            $cuerpo.='Carga Suelta';
+        }
+        if(($modelRemesas->contenedor1!="" && $modelRemesas->contenedor1!="N/A")){
+            $cuerpo .= $modelRemesas->contenedor1;
+        } 
+        if(($modelRemesas->contenedor2!="" && $modelRemesas->contenedor2!="N/A")){
+            $cuerpo .= '-'.$modelRemesas->contenedor2;
+        }
+        $cuerpo.='</td>';
         $cuerpo .= '<td>' . $modelViajes->placa . '</td>';
         $cuerpo .= '<td>' . $modelViajes->manifiesto . '</td>';
         $cuerpo .= '<td>' . $modelViajes->orden . '</td>';
