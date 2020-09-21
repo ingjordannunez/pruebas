@@ -36,7 +36,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-8 offset-2 mb-2" align="center">
-				<p class="h2">Prueba de Desarrollo Sigma prueba 5</p>
+				<p class="h2">Prueba de Desarrollo Sigma</p>
 			</div>
 		</div>
 		<div class="row">
