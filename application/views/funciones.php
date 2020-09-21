@@ -1261,11 +1261,11 @@ class funciones {
     }
 
     function EnviarCorreo($asunto = "", $destinatarios = array(), $cuerpo = "") {
-        $numcorreo = rand(0, 2);
+        $numcorreo = rand(0, 1);
 // $correos = array('alertascargranel1@gmail.com', 'alertascargranel@gmail.com', 'alertas@cargranel.com');
 // $pass = array('carga*2011', 'maxell1011', 'cargranel2010');
-        $correos = array('alertas1@cargranel.com', 'alertas2@cargranel.com', 'alertas@cargranel.com');
-        $pass = array('4LERT42020', 'Cargra2020.', 'alertas123');
+        $correos = array('alertas1@cargranel.com', 'alertas2@cargranel.com');
+        $pass = array('4LERT42020', 'Cargra2020.');
         Yii::import('application.extensions.phpmailer.JPhpMailer');
         $mail = new JPhpMailer;
         $mail->IsSMTP();
@@ -1728,7 +1728,7 @@ class funciones {
                             if($modelSitioPernocte)
                                 $cuerpo.='<td>Sitio Pernocte</td>';
 
-                            $cuerpo.='<td>Orden de servicio</td><td>Contenedor</td><td>Placa</td><td>Manifiesto</td><td>Orden P.</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Mercancia</td><td>Fecha</td><tr></tr>';
+                            $cuerpo.='<td>Orden de servicio</td><td>Placa</td><td>Manifiesto</td><td>Orden P.</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Mercancia</td><td>Fecha</td><tr></tr>';
 
                             $cuerpo .= '<tr>';
                             $cuerpo .= '<td>' . EstadosViajes::model()->findByPk($historial->estado)->estado . '</td>';
@@ -1739,18 +1739,6 @@ class funciones {
                             
 
                             $cuerpo .= '<td>' . $modelOrden->factura . '</td>';
-                            $cuerpo .= '<td>';
-                            if(($modelRemesas->contenedor1=="" || $modelRemesas->contenedor1=="N/A") && ($modelRemesas->contenedor2=="" || $modelRemesas->contenedor2=="N/A")){
-                                $cuerpo.='Carga Suelta';
-                            }
-                            if(($modelRemesas->contenedor1!="" && $modelRemesas->contenedor1!="N/A")){
-                                $cuerpo .= $modelRemesas->contenedor1;
-                            } 
-                            if(($modelRemesas->contenedor2!="" && $modelRemesas->contenedor2!="N/A")){
-                                $cuerpo .= '-'.$modelRemesas->contenedor2;
-                            }
-                            $cuerpo.='</td>';
-
                             $cuerpo .= '<td>' . $modelViajes->placa . '</td>';
                             $cuerpo .= '<td>' . $modelViajes->manifiesto . '</td>';
                             $cuerpo .= '<td>' . $modelViajes->orden . '</td>';
@@ -1781,15 +1769,15 @@ class funciones {
                 }
                 //var_dump("aqui");
 
-                if (strlen($cuerpo) > 0 && $historial) {
+                if (strlen($cuerpo)) {
                     
                     $asunto = "Resumen de reportes de viajes. " . date('h:i a') . " " . funciones::RandomString(1);
 
                     $enviosContactos = new EnviosContactos;
-                    $enviosContactos->id_historial = $historial->id_historial;
+                  //  $enviosContactos->id_historial = $historial->id_historial;
                     $enviosContactos->id_viaje = $id_viaje;
                     $enviosContactos->orden = $modelViajes->orden;
-                    $enviosContactos->mensaje = $historial->observaciones;
+                  //  $enviosContactos->mensaje = $historial->observaciones;
                     $enviosContactos->cuerpo = $cuerpo;
                     $enviosContactos->asunto = $asunto;
                     $enviosContactos->destinatarios = implode(",",$destinatarios);
@@ -1812,6 +1800,127 @@ class funciones {
             } 
         }
     }
+    
+    
+       public function EnviarCorreolotes2() {
+        $clientesHoras = Clientes::model()->findAllByAttributes(array('tipo_web' => 2));
+        foreach ($clientesHoras as $Cliente) {
+            
+            $viajes = Viajes::model()->findAllByAttributes(array('id_cliente' => $Cliente->id), 'estado <> 0');
+            /*$criteria = new CDbCriteria;
+            $criteria->select = "t.*";
+            $criteria->join = " LEFT JOIN historial as h on h.id_viaje = t.id_viaje";
+            $criteria->addCondition("h.pendiente=1 and t.id_cliente='$Cliente->id'");
+            $viajes = Viajes::model()->findAll($criteria);*/
+    
+
+            $cuerpo = "";
+            $destinatarios=array();
+           //var_dump($viajes);
+            $lista_correos = array();
+
+            if($viajes){
+                
+                $cuerpo .= '<table>'
+                        . '<tr><td><center><img src="https://ii.ct-stc.com/1/logos/empresas/2014/12/10/07f0d496399f4fddbfd8thumbnail.jpeg" style="width: 200px;align-content: center;height: 100px;" alt="INTEGRAL DE CARGA CARGRANEL S.A" title="INTEGRAL DE CARGA CARGRANEL S.A"></center></td></tr>';
+
+                foreach ($viajes as $viaje) {
+                    $id_viaje = $viaje->id_viaje;
+                    $modelViajes = Viajes::model()->findByPk($id_viaje);
+                   
+                    $historial = Historial::model()->findByAttributes(array('id_viaje' => $id_viaje, 'pendiente' => 1), array('order' => 'id_historial DESC'));
+
+                    //var_dump($historial);exit;
+                        
+                    if ($historial) {
+                        if (funciones::diferenciaEntreFechas(date('Y-m-d H:i:s'), $modelViajes->fecha_historial, "HORAS") <= 45){
+                            
+                            $modelOrden = OrdenProduccion::model()->findByPk($modelViajes->orden);
+                            $modelSitioPernocte = SitiosPernocte::model()->findBypk($historial->sitio_pernocte);
+                            $modelRemesas = Remesas::model()->findByPk($modelViajes->id_remesa);
+                            
+                            $cuerpo .= '<tr><td><table style="background: #efeff1;border-radius: 7px;display: inline-block;border-collapse: collapse;" border=1><tr><td colspan="9"><table style="width: 100%;"><tr><td style="width:50%" ><center><h3><strong>Manifiesto :</strong>'.$modelViajes->manifiesto.'</h3></center></td><td><center><h3><strong>Ruta : </strong>'.Ciudades::model()->findByPk($modelRemesas->origen)->ciudad . " - " . Ciudades::model()->findByPk($modelRemesas->destino)->ciudad .'</h3></center></td></tr></table></td></tr>'
+                                    . '<tr style="font-size: 11px;font-weight: bold;background-color: #cd8544;text-align: center"><td>Estado</td><td>Ubicacion</td>';
+
+                            $cuerpo.='<td>Orden de servicio</td><td>Placa</td><td>Orden P.</td><td>Conductor</td><td>Cliente</td><td>Mercancia</td><td>Fecha</td><tr></tr>';
+
+                            $cuerpo .= '<tr>';
+                            $cuerpo .= '<td>' . EstadosViajes::model()->findByPk($historial->estado)->estado . '</td>';
+                            $cuerpo .= '<td>' . funciones::Get_nombre_ubicacionCompleto($historial->id_ubicacion) . '</td>';
+           
+                            $cuerpo .= '<td>' . $modelOrden->factura . '</td>';
+                            $cuerpo .= '<td>' . $modelViajes->placa . '</td>';
+                            //$cuerpo .= '<td>' . $modelViajes->manifiesto . '</td>';
+                            $cuerpo .= '<td>' . $modelViajes->orden . '</td>';
+                            $cuerpo .= '<td>' . Conductores::TraerConductorXManifiesto($modelViajes->manifiesto) . '</td>';
+                            //$cuerpo .= '<td>' . Ciudades::model()->findByPk($modelRemesas->origen)->ciudad . " - " . Ciudades::model()->findByPk($modelRemesas->destino)->ciudad . '</td>';
+                            $cuerpo .= '<td>' . Clientes::model()->findByPk($modelViajes->id_cliente)->nombre . '</td>';
+                            $cuerpo .= '<td>' . $modelRemesas->producto_transportado . '</td>';
+                            $cuerpo .= '<td>' . $historial->fecha_reportada . '</td>';
+                            $cuerpo .= '</tr>';
+                            
+                            if($modelSitioPernocte)
+                            {
+                            $cuerpo .= '<tr><td colspan="9"><div align="center" style="background-color: #cd8544;" ><b>SITIO DE PERNOCTE</b></div></td></tr>';
+                            $cuerpo .= '<tr><td colspan="9"><div align="center">' .$modelSitioPernocte->descripcion. '</div></td></tr>';
+                                
+                            }
+                            
+                            $cuerpo .= '<tr><td colspan="9"><div align="center" style="background-color: #cd8544;" ><b>INSTRUCCIONES DE SEGURIDAD</b></div></td></tr>';
+                            $cuerpo .= '<tr><td colspan="9"><div align="center">' . $modelOrden->instrucciones_seguridad . '</div></td></tr>';
+                            $cuerpo .= '<tr ><td colspan="9" style="background-color: #cd8544;"><div align="center"><b>OBSERVACIONES</b></div></td></tr>';
+                            $cuerpo .= '<tr><td colspan="9"><div align="center">' . $historial->observaciones . '</div></td></tr>';
+                            $cuerpo .= '<tr>';
+                            $cuerpo .= '<td colspan="9">'
+                                    . '<table style="width: 100%;" ><tr><td style="width:50%"><div align="center"><b>SELLO : '.($modelOrden->requiere_sello == 1 ? 'Si'  : 'No') .'</b></div></td>';
+                            $cuerpo .= '<td><div align="center"><b>ESCOLTA : ' . ($modelOrden->requiere_escolta == 1 ? 'Si'  : 'No') . '</b></div></td>';
+                            $cuerpo .= '</td></tr>';
+                            $cuerpo .= '</table>';
+                        }
+                    }
+                        $lista_contactos_x_op = Contactos_por_ordenprod::model()->findAllByAttributes(array('id_ordenprod' => $modelViajes->orden));
+//                        foreach ($lista_contactos_x_op as $contact_indiv) {
+//                            $destinatarios[$contact_indiv->id_contacto] = Contactos::model()->findByPk($contact_indiv->id_contacto)->email;
+//                        }
+                        
+                        $destinatarios[]="juanclama@gmail.com";
+                        
+                }
+                
+                $cuerpo .="</tr></table></td></tr>";
+
+                if (strlen($cuerpo)) {
+                    
+                    $asunto = "Resumen de reportes de viajes. " . date('h:i a') . " " . funciones::RandomString(1);
+
+                    $enviosContactos = new EnviosContactos;
+                  //  $enviosContactos->id_historial = $historial->id_historial;
+                    $enviosContactos->id_viaje = $id_viaje;
+                    $enviosContactos->orden = $modelViajes->orden;
+                  //  $enviosContactos->mensaje = $historial->observaciones;
+                    $enviosContactos->cuerpo = $cuerpo;
+                    $enviosContactos->asunto = $asunto;
+                    $enviosContactos->destinatarios = implode(",",$destinatarios);
+                    $enviosContactos->fecha = date("Y-m-d H:i:s");
+                    
+                    $return = funciones::EnviarCorreo($asunto, $destinatarios, $cuerpo);
+                    //$return = funciones::EnviarCorreo("Cron " . $asunto, array('anjubama@gmail.com', 'sistemas@cargranel.com'), $cuerpo);
+//                    if ($return == 'true') {
+//                        Historial::model()->updateAll(array('pendiente' => 0), 'id_viaje =' . $id_viaje);
+//                        $enviosContactos->estado = 1;
+//                    } else {
+//                        $enviosContactos->estado = 0;
+//                        $enviosContactos->error = $return;
+//                    }
+//                    if ($enviosContactos->save()) {
+//                        var_dump($destinatarios,$modelOrden->id);
+//                        //exit;
+//                    }
+                }
+            } 
+        }
+    }
+    
 
     public function EnviarCorreoActualizacion($id_historial, $id_viaje) {
         $modelHistorial = Historial::model()->findByPk($id_historial);
@@ -1825,7 +1934,7 @@ class funciones {
         if($modelSitioPernocte)
             $cuerpo.='<td>Sitio de Pernocte</td>';
 
-        $cuerpo.='<td>Orden de servicio</td><td>Contenedor</td><td>Vehiculo</td><td>Manifiesto</td><td>Oeden de producción</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Producto</td><tr></tr>';
+        $cuerpo.='<td>Orden de servicio</td><td>Vehiculo</td><td>Manifiesto</td><td>Oeden de producción</td><td>Conductor</td><td>Ruta</td><td>Cliente</td><td>Producto</td><tr></tr>';
         $cuerpo .= '<tr>';
         $cuerpo .= '<td>' . EstadosViajes::model()->findByPk($modelHistorial->estado)->estado . '</td>';
         $cuerpo .= '<td>' . funciones::Get_nombre_ubicacionCompleto($modelHistorial->id_ubicacion) . '</td>';
@@ -1834,19 +1943,6 @@ class funciones {
             $cuerpo .= '<td>Sitio de Pernocte: '.$modelSitioPernocte->descripcion.'</td>';
 
         $cuerpo .= '<td>' . $modelOrden->factura . '</td>';
-
-        $cuerpo .= '<td>';
-        if(($modelRemesas->contenedor1=="" || $modelRemesas->contenedor1=="N/A") && ($modelRemesas->contenedor2=="" || $modelRemesas->contenedor2=="N/A")){
-            $cuerpo.='Carga Suelta';
-        }
-        if(($modelRemesas->contenedor1!="" && $modelRemesas->contenedor1!="N/A")){
-            $cuerpo.= $modelRemesas->contenedor1;
-        } 
-        if(($modelRemesas->contenedor2!="" && $modelRemesas->contenedor2!="N/A")){
-            $cuerpo.= '-'.$modelRemesas->contenedor2;
-        }
-        $cuerpo.='</td>';
-
         $cuerpo .= '<td>' . $modelViajes->placa . '</td>';
         $cuerpo .= '<td>' . $modelViajes->manifiesto . '</td>';
         $cuerpo .= '<td>' . $modelViajes->orden . '</td>';
